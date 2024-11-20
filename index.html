@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="nl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bit Academy - Dagdoelen</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@1.0.2/css/bulma.min.css">
+</head>
+
+<body>
+    <header class="has-background-warning py-5">
+        <div class="container">
+            <div class="columns is-vcentered">
+                <div class="column is-narrow">
+                    <a href="#" class="navbar-item">
+                        <img src="bitacademy_logo1.png" alt="Bit Academy Logo" style="width: 150px;">
+                    </a>
+                </div>
+                <div class="column is-narrow">
+                    <span class="is-size-1 has-text-black">|</span>
+                </div>
+                <div class="column is-narrow">
+                    <div class="navbar-start">
+                        <a href="#doelen" class="navbar-item has-text-dark has-text-weight-bold">Doelen</a>
+                        <a href="#form" class="navbar-item has-text-dark has-text-weight-bold">Mijn Doelen</a>
+                        <a href="#goedkeuring" class="navbar-item has-text-dark has-text-weight-bold">Coaches</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+    </header>
+
+        <style>
+            @keyframes slideIn {
+                0% { transform: translateX(100%); opacity: 0; }
+                100% { transform: translateX(0); opacity: 1; }
+            }
+    
+            .banner {
+                background-color: #f39c12;
+                color: white;
+                padding: 1.5rem;
+                text-align: center;
+                font-weight: bold;
+                font-size: 1.5rem;
+                letter-spacing: 1px;
+                animation: slideIn 3s ease-out;
+            }
+        </style>
+    
+        <section class="banner has-text-black has-text-weight-bold">
+            <h1>Stel jouw doel voor vandaag in bij Bit-Academy!</h1>
+        </section>    
+
+    <section id="doelen" class="section has-background-white">
+        <div class="container">
+            <h2 class="title has-text-centered has-text-black">Goedgekeurde Doelen van Vandaag</h2>
+            <div class="columns is-multiline" id="goal-list"></div>
+        </div>
+    </section>
+
+    <section id="form" class="section has-background-white">
+        <div class="container">
+            <h2 class="title has-text-centered has-text-black">Stel je Dagdoelen in</h2>
+            <form id="goal-form" onsubmit="return false;">
+                <div class="field">
+                    <label class="label has-text-black">Jouw doel voor vandaag</label>
+                    <div class="control">
+                        <input class="input" type="text" id="goal" placeholder="Vul hier je doel in" required>
+                        <style>
+                            #goal::placeholder {
+                                color: white !important;
+                            }
+                        </style>
+                    </div>
+                </div>
+                <div class="field">
+                    <label class="label has-text-black">Tijd voor je doel</label>
+                    <div class="control">
+                        <input class="input" type="time" id="time" required>
+                    </div>
+                </div>
+                <div class="field is-grouped is-grouped-centered">
+                    <div class="control">
+                        <button type="submit" class="button is-warning is-outlined is-medium" onclick="addGoal()">Stel Doel In</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </section>
+
+    <section id="goedkeuring" class="section has-background-white">
+        <div class="container">
+            <h2 class="title has-text-centered has-text-black">Goedkeuren of Afkeuren</h2>
+            <div class="columns is-multiline" id="approval-list"></div>
+        </div>
+    </section>
+
+    <footer class="has-background-white-ter has-text-dark py-4">
+        <div class="container has-text-centered">
+            <p>&copy; 2024 Bit Academy. Alle rechten voorbehouden.</p>
+        </div>
+    </footer>
+
+    <script>
+        const goals = [];
+        const unapprovedGoals = [];
+
+        function addGoal() {
+            const goalInput = document.getElementById('goal');
+            const timeInput = document.getElementById('time');
+            const goal = goalInput.value;
+            const time = timeInput.value;
+
+            if (goal && time) {
+                const newGoal = { goal, time, approved: false };
+                unapprovedGoals.push(newGoal);
+
+                goalInput.value = '';
+                timeInput.value = '';
+                renderUnapprovedGoals();
+            } else {
+                alert('Vul alle velden in.');
+            }
+        }
+
+        function approveGoal(index, isApproved) {
+            const goal = unapprovedGoals.splice(index, 1)[0];
+            goal.approved = isApproved;
+
+            if (isApproved) {
+                goals.push(goal);
+            }
+
+            renderGoals();
+            renderUnapprovedGoals();
+        }
+
+        function renderUnapprovedGoals() {
+            const approvalList = document.getElementById('approval-list');
+            approvalList.innerHTML = '';
+
+            unapprovedGoals.forEach((g, index) => {
+                approvalList.innerHTML += `
+                    <div class="column is-one-third">
+                        <div class="box">
+                            <h3 class="title is-4">${g.goal}</h3>
+                            <p><strong>Tijd:</strong> ${g.time}</p>
+                            <div class="buttons">
+                                <button class="button is-success" onclick="approveGoal(${index}, true)">Goedkeuren</button>
+                                <button class="button is-danger" onclick="approveGoal(${index}, false)">Afkeuren</button>
+                            </div>
+                        </div>
+                    </div>`;
+            });
+        }
+
+        function renderGoals() {
+            const goalList = document.getElementById('goal-list');
+            goalList.innerHTML = '';
+
+            goals.forEach((g) => {
+                goalList.innerHTML += `
+                    <div class="column is-one-third">
+                        <div class="box">
+                            <h3 class="title is-4">${g.goal}</h3>
+                            <p><strong>Tijd:</strong> ${g.time}</p>
+                        </div>
+                    </div>`;
+            });
+        }
+    </script>
+</body>
+
+</html>
